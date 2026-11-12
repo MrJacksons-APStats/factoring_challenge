@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Factoring Quadratics Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F8; --surface:#FFFFFF; --ink:#0E1A2B; --muted:#4A5870; --line:#C9D3E2;
+  --navy:#00274C; --accent:#00274C; --maize:#FFCB05; --maize-soft:#FFF4C2;
+  --good:#1B7A4A; --good-soft:#DDF3E6; --bad:#B3261E; --bad-soft:#FBE3E1; --field:#F6F8FC;
+  --cF:#00274C; --cO:#B07F00; --cI:#2D68C4; --cL:#1B7A4A;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#081325; --surface:#11223B; --ink:#E9EEF7; --muted:#A9B6CB; --line:#2A3F60;
+    --navy:#0B2A52; --accent:#2D68C4; --maize:#FFCB05; --maize-soft:#3A3310;
+    --good:#5BD495; --good-soft:#123A27; --bad:#FF8A80; --bad-soft:#3D1716; --field:#0C1A30;
+    --cF:#8FB4F0; --cO:#FFCB05; --cI:#6FA3FF; --cL:#5BD495;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#081325; --surface:#11223B; --ink:#E9EEF7; --muted:#A9B6CB; --line:#2A3F60;
+  --navy:#0B2A52; --accent:#2D68C4; --maize:#FFCB05; --maize-soft:#3A3310;
+  --good:#5BD495; --good-soft:#123A27; --bad:#FF8A80; --bad-soft:#3D1716; --field:#0C1A30;
+  --cF:#8FB4F0; --cO:#FFCB05; --cI:#6FA3FF; --cL:#5BD495;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.5}
+button,input{font:inherit;color:inherit}
+header.top{background:var(--navy);color:#fff;border-bottom:6px solid var(--maize)}
+.wrap{max-width:860px;margin:0 auto;padding:0 1.25rem}
+header .wrap{padding-top:1.4rem;padding-bottom:1.1rem}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin:0;letter-spacing:-.01em}
+h1 .hl{color:var(--maize)}
+.steps{position:relative;display:flex;gap:.5rem;margin:1.1rem 0 0;padding:0;list-style:none;overflow-x:auto}
+.steps button{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:.35rem .85rem .35rem .4rem;color:#fff;cursor:pointer;white-space:nowrap;font-size:.95rem}
+.steps .n{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:rgba(255,255,255,.18);font-family:var(--display);font-weight:800}
+.steps button[aria-current="step"]{background:var(--maize);color:#00274C;border-color:var(--maize)}
+.steps button[aria-current="step"] .n{background:#00274C;color:var(--maize)}
+.steps button.done .n{background:var(--good);color:#fff}
+.steps button:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--maize);outline-offset:2px}
+
+main.wrap{padding-top:1.5rem;padding-bottom:2rem}
+.intro h2{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.15;margin:0 0 .4rem}
+.intro p{margin:0 0 1rem;color:var(--muted);max-width:40rem}
+.intro .need{display:flex;align-items:center;gap:.4rem;color:var(--ink);font-weight:700;margin-top:-.4rem}
+.need .dot{width:1rem;height:1rem;border-radius:50%;border:2px solid var(--accent);display:inline-block}
+.need .dot.on{background:var(--good);border-color:var(--good)}
+.need span:last-child{margin-left:.3rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.4rem 1.3rem}
+.poly{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;margin:0 0 1.2rem}
+.poly .lab{font-weight:700;color:var(--muted)}
+.math{font-family:var(--display);font-weight:600}
+.poly .math{font-size:clamp(1.8rem,5vw,2.4rem)}
+.factors{display:flex;align-items:center;justify-content:center;gap:.25rem;flex-wrap:nowrap;font-family:var(--display);font-size:2.4rem;font-weight:400}
+.factors input{width:min(9.5rem,32vw);min-width:0;font-family:var(--display);font-weight:600;font-size:1.6rem;text-align:center;padding:.35rem .5rem;border-radius:10px;border:2px solid var(--line);background:var(--field);color:var(--ink)}
+.factors input.err{border-color:var(--bad)}
+.factors .dot{font-size:1.8rem;padding:0 .15rem}
+.factors input.gcf{width:4.2rem;margin-right:.15rem}
+.factors input.quad{width:min(17rem,58vw)}
+.stepbox.done{border-bottom:2px solid var(--line);padding-bottom:1.2rem;margin-bottom:1.2rem}
+.stepbox.done #submit1{display:none}
+[hidden]{display:none!important}
+.countrow{display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem;font-weight:700}
+.countrow input{width:4rem;font-family:var(--display);font-weight:600;font-size:1.5rem;text-align:center;padding:.3rem;border-radius:10px;border:2px solid var(--line);background:var(--field);color:var(--ink)}
+.solhead{margin-top:1.3rem}
+.zeros input:disabled,.countrow input:disabled{opacity:.75}
+.solbox{display:inline-flex;align-items:center;gap:.35rem}
+.frac{display:inline-flex;flex-direction:column;align-items:center;gap:.2rem}
+.solset .frac input{width:4.4rem;font-size:1.25rem;padding:.2rem .3rem}
+.frac .bar{display:block;width:100%;height:3px;border-radius:2px;background:var(--ink)}
+.solset.has-frac .brace{font-size:5rem;line-height:1}
+.foil.compact{padding-top:.8rem}
+.foil.compact .cols{gap:.4rem}
+.foil.compact .col{padding:.3rem .3rem .4rem}
+.foil.compact .col .L{font-size:1.2rem}
+.foil.compact .col .m{font-size:.9rem}
+.foil.compact .col .r{font-size:1rem}
+.foil.compact .sumrow .math{font-size:1.05rem}
+.foil.compact .sumrow .k{font-size:.92rem}
+.step2expr{font-size:1.5rem;margin-left:.6rem;color:var(--ink);white-space:nowrap}
+.step2expr .t{padding:0}
+.stephead{flex-wrap:wrap}
+.badge{white-space:nowrap}
+.factors .eq0{font-family:var(--display);font-weight:600;font-size:1.9rem;margin-left:.4rem;white-space:nowrap}
+@media (max-width:480px){#frow.solving input{width:25vw}.factors .eq0{font-size:1.5rem;margin-left:.2rem}.step2expr{font-size:1.35rem;margin-left:0;flex-basis:100%}}
+.zerostep{border-top:2px solid var(--line);margin-top:1.3rem;padding-top:1.2rem}
+.zeros{display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;font-family:var(--display);font-size:1.6rem;font-weight:600}
+.zline{display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap}
+.zeros input,.solset input{font-family:var(--display);font-weight:600;font-size:1.5rem;text-align:center;padding:.35rem .5rem;border-radius:10px;border:2px solid var(--line);background:var(--field);color:var(--ink)}
+.zeros input{width:min(9rem,34vw)}
+.zeros .or{font-family:var(--body);font-size:1.1rem;font-weight:700;color:var(--muted)}
+.solset{display:flex;align-items:center;justify-content:center;gap:.35rem;margin-top:1.3rem;font-family:var(--display);font-size:2rem;flex-wrap:wrap}
+.solset .lab{font-family:var(--body);font-size:1rem;font-weight:700;color:var(--muted);margin-right:.4rem}
+.solset input{width:4.8rem}
+.solset .brace{font-weight:400;font-size:2.6rem}
+.factors input:disabled{opacity:.75}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
+.champ{position:fixed;inset:0;z-index:90;display:grid;place-items:center;overflow:auto;
+  padding:calc(1.5rem + env(safe-area-inset-top,0px)) 1.25rem calc(1.5rem + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(circle at 50% 35%,#0B3A6E 0%,#00274C 55%,#001530 100%);color:#fff}
+.champcard{max-width:34rem;text-align:center}
+.champ .trophy{width:min(15rem,60vw);height:auto;animation:rise .8s cubic-bezier(.2,1.4,.4,1) both}
+.champ h2{font-family:var(--display);font-weight:800;font-size:clamp(2rem,7vw,3rem);color:var(--maize);margin:.6rem 0 .4rem;line-height:1.1}
+.champ p{font-size:clamp(1.1rem,3.5vw,1.35rem);line-height:1.5;margin:0 0 1.5rem}
+@keyframes rise{0%{transform:translateY(30px) scale(.6);opacity:0}100%{transform:none;opacity:1}}
+.steps .champpill{background:var(--maize);color:#00274C;border-color:var(--maize);font-weight:700}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:.8rem 1rem;flex-wrap:wrap}
+.champbtn{border:0;border-radius:999px;background:var(--maize);color:#00274C;font-weight:700;padding:.45rem 1rem;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.25);white-space:nowrap}
+.stephead{display:flex;align-items:center;gap:.6rem;margin:0 0 .8rem;font-size:1.15rem}
+.badge{background:var(--maize);color:#00274C;border-radius:999px;padding:.1rem .7rem;font-family:var(--display);font-weight:800;font-size:.95rem}
+.stepbox.done .badge::after{content:" ✓"}
+.factors input:disabled{opacity:.75}
+@media (max-width:480px){.factors{font-size:1.9rem}.factors input{font-size:1.25rem;padding:.35rem .25rem}.factors input.gcf{width:2.8rem}.factors input.quad{width:62vw}#step2 .factors input:not(.gcf){width:27vw}}
+.feedback .t{padding:0}
+.typing{text-align:center;color:var(--muted);font-size:.92rem;margin:.5rem 0 0}
+
+.foil{margin-top:1.4rem;border-top:2px solid var(--line);padding-top:1.1rem}
+.foil h3{margin:0 0 .7rem;font-size:1rem;color:var(--muted);font-weight:700}
+.cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem}
+@media (max-width:560px){.cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.col{border:1px solid var(--line);border-top:5px solid var(--c);border-radius:10px;padding:.5rem .4rem .6rem;text-align:center;background:var(--field)}
+.col .L{font-family:var(--display);font-weight:800;font-size:1.7rem;color:var(--c);line-height:1}
+.col .w{font-size:.8rem;color:var(--muted);margin-bottom:.35rem}
+.col .m{font-family:var(--display);font-weight:600;font-size:1.05rem;min-height:1.5em}
+.col .r{font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--c);min-height:1.5em}
+.cF{--c:var(--cF)} .cO{--c:var(--cO)} .cI{--c:var(--cI)} .cL{--c:var(--cL)}
+.sum{margin-top:1rem;display:grid;grid-template-columns:max-content 1fr;gap:.45rem .8rem;align-items:baseline}
+.sumrow{display:contents}
+.sumrow .k{font-weight:700;color:var(--muted)}
+.sumrow .math{font-size:1.3rem}
+@media (max-width:480px){.sum{grid-template-columns:1fr;gap:.1rem}.sumrow .math{margin-bottom:.5rem}}
+.t{border-radius:6px;padding:0 .2rem}
+.t.ok{background:var(--good-soft);color:var(--good)}
+.t.no{background:var(--bad-soft);color:var(--bad);text-decoration:underline wavy;text-underline-offset:4px}
+.placeholder{color:var(--muted);font-style:italic}
+
+.actions{margin-top:1.3rem;display:flex;gap:.6rem;flex-wrap:wrap}
+.btn{border:0;border-radius:8px;padding:.65rem 1.3rem;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;font-size:1.05rem}
+.btn.go{background:var(--maize);color:#00274C}
+.btn.quiet{background:transparent;color:var(--muted);text-decoration:underline;padding:.3rem;font-size:1rem}
+.btn.danger{background:var(--bad);color:#fff}
+.feedback{margin-top:1rem;border-radius:10px;padding:.8rem 1rem;display:none}
+.feedback.show{display:block}
+.feedback.good{background:var(--good-soft);color:var(--good);font-weight:700}
+.feedback.bad{background:var(--bad-soft)}
+.feedback.bad .head{color:var(--bad);font-weight:700;display:block;margin-bottom:.3rem}
+.feedback.info{background:var(--field)}
+.feedback ul{margin:.2rem 0 0 1.1rem;padding:0}
+.feedback li{margin:.35rem 0}
+.feedback .tag{font-family:var(--display);font-weight:800}
+.feedback .row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}
+footer{text-align:center;padding:0 1rem 2rem}
+.confirm{max-width:28rem;margin:.6rem auto 0;background:var(--surface);border:2px solid var(--bad);border-radius:12px;padding:1rem}
+.confirm p{margin:0 0 .8rem;font-weight:700}
+.confirm .row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+.pop{animation:pop .4s ease-out}
+@keyframes pop{0%{transform:scale(.97);opacity:.4}100%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <h1>Factoring <span class="hl">Quadratics</span></h1>
+      <button type="button" class="champbtn" id="champBtn" hidden>🏆 Champion page</button>
+    </div>
+    <ol class="steps" id="steps" aria-label="Levels"></ol>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro" id="intro"></section>
+  <section class="card">
+    <div class="poly"><span class="lab" id="polyLab">Polynomial:</span><span class="math" id="poly"></span></div>
+    <div id="step1" class="stepbox" hidden>
+      <h3 class="stephead"><span class="badge">Step 1</span>Factor out the GCF</h3>
+      <div class="factors">
+        <input type="text" id="g1" class="gcf" inputmode="numeric" aria-label="GCF" autocomplete="off">
+        <span aria-hidden="true">(</span>
+        <input type="text" id="g2" class="quad" aria-label="Quadratic left after factoring out the GCF" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <span aria-hidden="true">)</span><span class="eq0" id="eq0b" hidden>= 0</span>
+      </div>
+      <p class="typing">Type x² as <strong>x^2</strong>.</p>
+      <div class="actions"><button type="button" class="btn" id="submit1">Check Step 1</button></div>
+      <div class="feedback" id="fb1" role="status"></div>
+    </div>
+
+    <div id="step2">
+    <h3 class="stephead" id="step2head" hidden><span class="badge" id="step2badge">Step 2</span><span id="step2title">Factor completely</span><span class="math step2expr" id="step2expr"></span></h3>
+    <div class="factors" id="frow">
+      <input type="text" id="g3" class="gcf" inputmode="numeric" aria-label="GCF" autocomplete="off" hidden>
+      <span aria-hidden="true">(</span>
+      <input type="text" id="f1" aria-label="First factor" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <span aria-hidden="true">)</span><span class="dot" aria-hidden="true">·</span><span aria-hidden="true">(</span>
+      <input type="text" id="f2" aria-label="Second factor" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <span aria-hidden="true">)</span><span class="eq0" id="eq0" hidden>= 0</span>
+    </div>
+    <p class="typing">Type each factor like <strong>x + 3</strong> or <strong>x − 5</strong>.</p>
+
+    <div class="foil" id="foil" aria-live="polite">
+      <h3>Multiply your factors</h3>
+      <div class="cols">
+        <div class="col cF"><div class="L">F</div><div class="w">First</div><div class="m" id="mF"></div><div class="r" id="rF"></div></div>
+        <div class="col cO"><div class="L">O</div><div class="w">Outer</div><div class="m" id="mO"></div><div class="r" id="rO"></div></div>
+        <div class="col cI"><div class="L">I</div><div class="w">Inner</div><div class="m" id="mI"></div><div class="r" id="rI"></div></div>
+        <div class="col cL"><div class="L">L</div><div class="w">Last</div><div class="m" id="mL"></div><div class="r" id="rL"></div></div>
+      </div>
+      <div class="sum">
+        <div class="sumrow"><span class="k">F + O + I + L:</span><span class="math" id="expanded"></span></div>
+        <div class="sumrow"><span class="k">Your product:</span><span class="math" id="product"></span></div>
+        <div class="sumrow"><span class="k" id="targetLab">Polynomial:</span><span class="math" id="target"></span></div>
+        <div class="sumrow gcfrow" hidden><span class="k">Times your GCF:</span><span class="math" id="timesGcf"></span></div>
+        <div class="sumrow gcfrow" hidden><span class="k">Original polynomial:</span><span class="math" id="orig"></span></div>
+      </div>
+    </div>
+
+    <div class="actions"><button type="button" class="btn" id="submit">Submit</button></div>
+    <div class="feedback" id="fb" role="status"></div>
+    </div>
+
+    <div id="zeroStep" class="zerostep" hidden>
+      <h3 class="stephead"><span class="badge" id="zbadge">Step 2</span><span id="ztitle">Set each factor equal to zero, then solve</span></h3>
+      <div class="zeros">
+        <span class="zline"><input type="text" id="z1" aria-label="First factor set equal to zero" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="eq">= 0</span></span>
+        <span class="or">or</span>
+        <span class="zline"><input type="text" id="z2" aria-label="Second factor set equal to zero" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="eq">= 0</span></span>
+        <span class="or" id="or2" hidden>or</span>
+        <span class="zline" id="zline3" hidden><input type="text" id="z3" aria-label="Third factor set equal to zero" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="eq">= 0</span></span>
+      </div>
+      <div class="countrow" id="countRow" hidden>
+        <label for="zc">How many solutions does this equation have?</label>
+        <input type="text" id="zc" inputmode="numeric" autocomplete="off">
+      </div>
+      <h3 class="stephead solhead" id="solHead" hidden><span class="badge">Step 4</span>Solve</h3>
+      <div class="solset" id="solset">
+        <span class="lab">Solution set:</span>
+        <span class="solbox" id="solbox"></span>
+      </div>
+      <div class="actions"><button type="button" class="btn" id="submitZ">Submit</button></div>
+      <div class="feedback" id="fbz" role="status"></div>
+    </div>
+  </section>
+<div id="champ" class="champ" hidden role="dialog" aria-modal="true" aria-labelledby="champTitle">
+  <div class="champcard">
+    <svg class="trophy" viewBox="0 0 240 290" role="img" aria-label="A gold trophy that says Factoring Champion">
+      <defs>
+        <linearGradient id="gold" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#E0A800"/><stop offset=".45" stop-color="#FFD84D"/><stop offset="1" stop-color="#D99A00"/>
+        </linearGradient>
+      </defs>
+      <path d="M62 48 C22 48 22 112 74 118" fill="none" stroke="#FFCB05" stroke-width="12" stroke-linecap="round"/>
+      <path d="M178 48 C218 48 218 112 166 118" fill="none" stroke="#FFCB05" stroke-width="12" stroke-linecap="round"/>
+      <path d="M56 26 H184 V82 C184 136 152 166 120 170 C88 166 56 136 56 82 Z" fill="url(#gold)"/>
+      <path d="M72 36 V82 C72 112 84 134 100 148" fill="none" stroke="#FFF2B3" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+      <polygon points="120,62 128,82 150,83 133,96 139,117 120,105 101,117 107,96 90,83 112,82" fill="#00274C"/>
+      <rect x="108" y="168" width="24" height="26" fill="#E0A800"/>
+      <rect x="84" y="192" width="72" height="14" rx="4" fill="#FFCB05"/>
+      <rect x="60" y="204" width="120" height="62" rx="8" fill="#C98F00"/>
+      <rect x="70" y="213" width="100" height="44" rx="5" fill="#0B2A52" stroke="#FFCB05" stroke-width="2"/>
+      <text x="120" y="232" text-anchor="middle" fill="#FFCB05" font-family="Bricolage Grotesque, Segoe UI, system-ui, sans-serif" font-weight="800" font-size="13" letter-spacing="1">FACTORING</text>
+      <text x="120" y="250" text-anchor="middle" fill="#FFFFFF" font-family="Bricolage Grotesque, Segoe UI, system-ui, sans-serif" font-weight="800" font-size="14" letter-spacing="1.5">CHAMPION</text>
+    </svg>
+    <h2 id="champTitle">Factoring Champion!</h2>
+    <p>Congratulations on completing Mr. Jackson’s Factoring Challenge. Let Mr. Jackson know you are a champion by going up and giving him a high five or fist bump!</p>
+    <button type="button" class="btn go" id="champClose">Back to the levels</button>
+  </div>
+</div>
+<canvas id="fx" aria-hidden="true"></canvas>
+</main>
+
+<footer>
+  <button class="btn quiet" id="reset">Start over from Level 1</button>
+  <div class="confirm" id="confirm" hidden role="alertdialog" aria-labelledby="confirmText">
+    <p id="confirmText">Start over? This clears your progress and locks the later levels again.</p>
+    <div class="row">
+      <button type="button" class="btn danger" id="resetYes">Yes, start over</button>
+      <button type="button" class="btn" id="resetNo">Keep my progress</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const rand=(lo,hi)=>lo+Math.floor(Math.random()*(hi-lo+1));
+
+/* Each level makes a problem as two factors (px + q), stored as [p, q].
+   make(ctx) returns {prob, meta}; need = correct answers required to finish the level. */
+/* Level 3 sets: x² ± bx ± c that factor with all four sign choices.
+   [b, c, [m,n] where m+n=b and mn=c, [p,q] where p−q=b and pq=c] */
+const SETS=[[5,6,[3,2],[6,1]],[10,24,[6,4],[12,2]],[13,30,[10,3],[15,2]],[15,54,[9,6],[18,3]],
+  [17,60,[12,5],[20,3]],[20,96,[12,8],[24,4]],[25,84,[21,4],[28,3]]];
+/* sign combos: 0 = + +, 1 = − +, 2 = + −, 3 = − −  (sign before the x term, sign before the number) */
+function fromSet(i,combo){
+  const [,,[m,n],[p,q]]=SETS[i];
+  return [[[1,m],[1,n]],[[1,-m],[1,-n]],[[1,p],[1,-q]],[[1,-p],[1,q]]][combo];
+}
+const LEVELS=[
+  {id:1,need:1,short:"Level 1",title:"Level 1: Both factors add",
+   blurb:"Every polynomial here comes from two factors like (x + 2)(x + 5). Look for two numbers that multiply to the last term and add to the middle term.",
+   make(){ let a=rand(1,6),b; do{b=rand(1,6)}while(b===a); return {prob:[[1,a],[1,b]]}; }},
+  {id:2,need:2,short:"Level 2",title:"Level 2: One factor subtracts",
+   blurb:"Now the last term is negative, so one factor has a + and the other has a −. Look for two numbers that multiply to the last term and add to the middle term.",
+   make(){ return {prob:[[1,-rand(5,8)],[1,rand(1,4)]]}; }},
+  {id:3,need:2,short:"Level 3",title:"Level 3: Same numbers, any signs",
+   blurb:"Every polynomial at this level would factor no matter which signs sit between its terms. You’ll factor two versions with the same numbers but different signs, so pay close attention to the signs.",
+   make(ctx){
+     if(ctx&&ctx.set!=null){                     // stay in the same set, with a sign combo not used yet
+       const open=[0,1,2,3].filter(c=>!ctx.used.includes(c));
+       const combo=open[rand(0,open.length-1)];
+       return {prob:fromSet(ctx.set,combo),meta:{set:ctx.set,used:ctx.used.concat(combo)}};
+     }
+     const set=rand(0,SETS.length-1), combo=rand(0,3);
+     return {prob:fromSet(set,combo),meta:{set,used:[combo]}};
+   }},
+  {id:4,need:2,short:"Level 4",title:"Level 4: No middle term",
+   blurb:"These polynomials have no x term. Think about what the outer and inner products must add up to.",
+   make(){ const b=rand(2,12); return {prob:[[1,-b],[1,b]]}; }},
+  {id:5,need:2,short:"Level 5",title:"Level 5: A lead coefficient",
+   blurb:"Now the x² term has a coefficient. One factor starts with 2x or 3x, and the other starts with x. Which numbers you choose, and where you put them, both change the middle term.",
+   make(){
+     let a,b,c,f;
+     do{ a=rand(2,3); b=pickB(a,8); c=rand(1,6); f=[[a,sgn()*b],[1,sgn()*c]]; }while(mul(f[0],f[1])[1]===0);
+     return {prob:f};
+   }},
+  {id:6,need:2,short:"Level 6",title:"Level 6: Two lead coefficients",
+   blurb:"Now neither factor starts with just x. Think about which x terms multiply to the first term and which numbers multiply to the last term, then test where they go.",
+   make(){
+     let a,b,c,d,f;
+     do{
+       a=rand(2,3); b=sgn()*pickB(a,8); c=rand(2,3); d=sgn()*pickB(c,8);
+       f=[[a,b],[c,d]];
+     }while((a===c && b===-d) || mul(f[0],f[1])[1]===0);   // no conjugates (difference of squares)
+     return {prob:f};
+   }},
+  {id:7,need:2,short:"Level 7",title:"Level 7: No middle term, with a lead coefficient",
+   blurb:"These polynomials have no x term, and the x² term has a coefficient. Use what you learned in Level 4.",
+   make(){ const a=rand(2,3), b=pickB(a,10); return {prob:[[a,-b],[a,b]]}; }},
+  {id:8,need:2,gcf:true,short:"Level 8",title:"Level 8: Factor out the GCF first",
+   blurb:"Every term in these polynomials shares a common factor. Step 1: factor out the greatest common factor (GCF). Step 2: factor the quadratic that’s left.",
+   make(){
+     const k=rand(2,6); let a,b;
+     do{ a=sgn()*rand(1,6); b=sgn()*rand(1,6); }while(b===-a);
+     return {prob:[[1,a],[1,b]],meta:{k}};
+   }},
+  {id:9,need:2,solve:true,short:"Level 9",title:"Level 9: Solve by factoring",
+   blurb:"Now the quadratic is set equal to zero. Step 1: factor it. Step 2: if two factors multiply to zero, one of them must be zero. Set each factor equal to zero and solve.",
+   make(){ let a=rand(1,6),b; do{b=rand(1,6)}while(b===a); return {prob:[[1,a],[1,b]]}; }},
+  {id:10,need:2,solve:true,short:"Level 10",title:"Level 10: Solve by factoring, one factor subtracts",
+   blurb:"Same steps as Level 9, with Level 2 quadratics. The last term is negative, so one factor has a + and the other has a −. Watch the signs when you solve.",
+   make(){ return LEVELS[1].make(); }},
+  {id:11,need:2,solve:true,short:"Level 11",title:"Level 11: Solve by factoring, same numbers, any signs",
+   blurb:"Same steps as Level 9, with Level 3 quadratics. You’ll solve two equations with the same numbers but different signs, so pay close attention to the signs.",
+   make(ctx){ return LEVELS[2].make(ctx); }},
+  {id:12,need:2,solve:true,short:"Level 12",title:"Level 12: Solve by factoring, no middle term",
+   blurb:"Same steps as Level 9, with Level 4 quadratics. There’s no x term, so think about what the outer and inner products must add up to.",
+   make(){ return LEVELS[3].make(); }},
+  {id:13,need:2,solve:true,fracSol:true,short:"Level 13",title:"Level 13: Solve by factoring, a lead coefficient",
+   blurb:"Same steps as Level 9, with Level 5 quadratics. One solution is an integer and one is a fraction. Write the solutions from least to greatest.",
+   make(){ return LEVELS[4].make(); }},
+  {id:14,need:2,solve:true,fracSol:"both",short:"Level 14",title:"Level 14: Solve by factoring, two lead coefficients",
+   blurb:"Same steps as Level 9, with Level 6 quadratics. Both solutions are fractions, and you can write them in either order.",
+   make(){ let m; do{ m=LEVELS[5].make(); }while(m.prob[0][0]===m.prob[1][0] && m.prob[0][1]===m.prob[1][1]); return m; }},   // no repeated factor, so two different solutions
+  {id:15,need:2,solve:true,fracSol:"both",short:"Level 15",title:"Level 15: Solve by factoring, no middle term with a lead coefficient",
+   blurb:"Same steps as Level 9, with Level 7 quadratics. Both solutions are fractions, and you can write them in either order.",
+   make(){ return LEVELS[6].make(); }},
+  {id:16,need:2,solve:true,gcf:true,short:"Level 16",title:"Level 16: Solve with a GCF",
+   blurb:"Step 1: factor out the GCF. Step 2: factor completely. Step 3: set every factor equal to zero and decide how many solutions there are. Step 4: solve.",
+   make(){
+     const k=rand(2,6); let a,b;
+     do{ a=sgn()*rand(1,6); b=sgn()*rand(1,6); }while(b===-a || b===a);   // two different solutions
+     return {prob:[[1,a],[1,b]],meta:{k}};
+   }}
+];
+function sgn(){ return Math.random()<.5?1:-1; }
+/* a number from 1 to max that is not a multiple of a, so (ax + b) has no common factor */
+function pickB(a,max){ let b; do{b=rand(1,max)}while(b%a===0); return b; }
+
+/* ---------- Polynomials and formatting ---------- */
+const mul=(f,g)=>[f[0]*g[0], f[0]*g[1]+f[1]*g[0], f[1]*g[1]];
+const same=(a,b)=>a.length===b.length&&a.every((x,i)=>x===b[i]);
+const MINUS="−";
+const num=n=>(n<0?MINUS:"")+Math.abs(n);
+/* a single term c·x^p as text, e.g. 3x, −x, x², −12 */
+function mono(c,p){
+  if(p===0) return num(c);
+  const co = c===1?"": c===-1?MINUS : num(c);
+  return co+"x"+(p===2?"²":"");
+}
+const par=(c,p)=>c<0?`(${mono(c,p)})`:mono(c,p);
+/* a list of [c,p] terms joined with signs; zeros kept only if keepZero */
+function seq(terms,keepZero,cls){
+  let out="",first=true;
+  terms.forEach(([c,p],i)=>{
+    if(c===0&&!keepZero) return;
+    const k=cls?cls[i]:"";
+    const body=mono(Math.abs(c),p).replace(/^1x/,"x");
+    const t=`<span class="t ${k}">${first?(c<0?MINUS:"")+mono(Math.abs(c),p):body}</span>`;
+    out+= first ? t : (c<0?` ${MINUS} `:" + ")+t;
+    first=false;
+  });
+  return out||"0";
+}
+const polyTerms=c=>[[c[0],2],[c[1],1],[c[2],0]];
+
+/* ---------- Reading what students type ---------- */
+function parseFactor(raw){
+  let s=String(raw).replace(/[−–—]/g,"-").replace(/\s+/g,"").replace(/X/g,"x").replace(/\*/g,"");
+  if(/^\(.*\)$/.test(s)) s=s.slice(1,-1);
+  if(!s) return {empty:true};
+  const parts=s.match(/[+-]?[^+-]+/g);
+  if(!parts||parts.join("")!==s) return {msg:"Use only numbers, x, +, and −."};
+  const terms=[];
+  for(const t of parts){
+    const m=t.match(/^([+-]?)(\d*)(x?)$/);
+    if(!m||(!m[2]&&!m[3])) return {msg:`“${t.replace(/-/g,MINUS)}” isn’t a term I can read. Try something like x + 3.`};
+    const sign=m[1]==="-"?-1:1, c=sign*(m[2]===""?1:parseInt(m[2],10));
+    terms.push([c,m[3]?1:0]);
+  }
+  if(terms.length!==2) return {msg: terms.length<2 ? "Each factor needs two terms, like x + 3." : "Each factor should have just two terms, like x + 3."};
+  if(terms[0][1]===terms[1][1]) return {msg: terms[0][1] ? "Each factor needs an x term and a number." : "Each factor needs an x term, like x + 3."};
+  /* Terms stay in the order the student typed, so F, O, I, L follow their order. f is [x coefficient, number]. */
+  const xt=terms.find(t=>t[1]===1), ct=terms.find(t=>t[1]===0);
+  return {terms, f:[xt[0],ct[0]]};
+}
+
+/* ---------- State ---------- */
+const KEY="factoring-challenge-v2";
+function newLevel(L){ const m=L.make(); return {prob:m.prob,meta:m.meta||null,solved:false,count:0,inputs:["",""],g:["","",""],z:["","","",""],step1:false}; }
+function fresh(){
+  const s={unlocked:1,current:1,lv:{}};
+  LEVELS.forEach(L=>s.lv[L.id]=newLevel(L));
+  return s;
+}
+let S; try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.lv) S=fresh();
+else {
+  /* keep saved progress when new levels are added */
+  LEVELS.forEach(lv=>{ if(!S.lv[lv.id]) S.lv[lv.id]=newLevel(lv); });
+  LEVELS.forEach(lv=>{ if(S.lv[lv.id].solved && lv.id<LEVELS.length) S.unlocked=Math.max(S.unlocked,lv.id+1); });
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const L=()=>LEVELS[S.current-1], st=()=>S.lv[S.current];
+const target=()=>{const p=st().prob;return mul(p[0],p[1]);};          // what the two binomials must multiply to
+const K=()=>(L().gcf&&st().meta)?st().meta.k:1;
+const full=()=>target().map(x=>x*K());                               // the polynomial students see
+let marks=null;   // term-by-term marks shown after a submit
+
+/* ---------- Rendering ---------- */
+function renderSteps(){
+  $("steps").innerHTML="";
+  LEVELS.forEach(lv=>{
+    const li=document.createElement("li"),b=document.createElement("button");
+    b.innerHTML=`<span class="n">${lv.id<=S.unlocked?lv.id:"🔒"}</span>${lv.short}`;
+    if(S.lv[lv.id].solved) b.classList.add("done");
+    if(lv.id===S.current) b.setAttribute("aria-current","step");
+    if(lv.id>S.unlocked){b.disabled=true;b.title="Solve the level before this one to unlock it.";}
+    b.addEventListener("click",()=>go(lv.id));
+    li.appendChild(b);$("steps").appendChild(li);
+    if(lv.id===S.current) requestAnimationFrame(()=>{ const c=$("steps"); c.scrollLeft=Math.max(0,li.offsetLeft-c.clientWidth/2+li.offsetWidth/2); });
+  });
+  /* the Champion page button stays in the header on every level once all levels are finished */
+  $("champBtn").hidden=!isChamp();
+}
+function renderIntro(){
+  const lv=L(), s=st();
+  const done=s.solved?lv.need:(s.count||0);
+  const dots=Array.from({length:lv.need},(_,i)=>`<span class="dot${i<done?" on":""}" aria-hidden="true"></span>`).join("");
+  const status=s.solved?"Level complete. Extra problems are for practice."
+    :`Correct answers: ${done} of ${lv.need}${lv.need>1?(lv.id<LEVELS.length?` needed to unlock Level ${lv.id+1}`:" needed to finish"):""}`;
+  $("intro").innerHTML=`<h2>${lv.title}</h2><p>${lv.blurb}</p><p class="need">${dots}<span>${status}</span></p>`;
+}
+function renderLevel(){
+  const s=st(), lv=L(); renderIntro();
+  if(!s.g) s.g=["","",""];
+  if(!s.z) s.z=["","","",""];
+  const sv=!!lv.solve;
+  $("polyLab").textContent = sv ? "Equation:" : "Polynomial:";
+  $("poly").innerHTML=seq(polyTerms(full()))+(sv?" = 0":"");
+  $("f1").value=s.inputs[0]; $("f2").value=s.inputs[1];
+  $("g1").value=s.g[0]; $("g2").value=s.g[1]; $("g3").value=s.g[2];
+  const g=!!lv.gcf;
+  $("step1").hidden=!g; $("step2head").hidden=!g; $("g3").hidden=!g;
+  document.querySelectorAll(".gcfrow").forEach(r=>r.hidden=!g);
+  $("step2").hidden = g && !s.step1;
+  $("step1").classList.toggle("done",g&&s.step1);
+  $("g1").disabled=$("g2").disabled=$("submit1").disabled=g&&s.step1;
+  setFb1(g&&s.step1 ? step1Done() : null);
+  /* Level 9+: the factor boxes are Step 1, the zero product boxes are Step 2 */
+  if(sv && !g){ $("step2head").hidden=false; $("step2badge").textContent="Step 1"; $("step2title").textContent="Factor"; }
+  else { $("step2badge").textContent="Step 2"; $("step2title").textContent="Factor completely"; }
+  $("foil").hidden=sv&&!s.foilOn; $("foil").classList.toggle("compact",sv);
+  $("eq0").hidden=!sv; $("frow").classList.toggle("solving",sv);
+  $("step2expr").innerHTML = (g&&s.step1) ? `${K()}(${seq(polyTerms(target()))})` : "";
+  $("eq0b").hidden=!(sv&&g);
+  const locked=sv&&(g?!!s.factored:s.step1);          // factoring finished on a solving level
+  $("f1").disabled=$("f2").disabled=$("g3").disabled=locked; $("submit").hidden=locked;
+  $("zeroStep").hidden=!locked;
+  /* Level 16: three factors, a "how many solutions" question, then the solution set as Step 4 */
+  const three=sv&&g, cOk=three&&!!s.countOk;
+  $("or2").hidden=$("zline3").hidden=$("countRow").hidden=!three;
+  $("zbadge").textContent=three?"Step 3":"Step 2";
+  $("ztitle").textContent=three?"Set each factor equal to zero":"Set each factor equal to zero, then solve";
+  $("solHead").hidden=!cOk; $("solset").hidden=three&&!cOk;
+  ["z1","z2","z3","zc"].forEach(id=>$(id).disabled=cOk);
+  $("submitZ").textContent=three&&!cOk?"Check":"Submit";
+  ["z1","z2","z3"].forEach((id,i)=>$(id).value=s.z[i]||""); $("zc").value=s.zc||""; renderSolset();
+  setFeedback(cOk?countMsg():null,"fbz");
+  marks=null; setFeedback(locked?{kind:"good",html:`Factored correctly! ${g?K():""}${factoredText()} = 0.`}:null); renderFoil();
+}
+function renderFoil(){
+  const a=parseFactor($("f1").value), b=parseFactor($("f2").value);
+  $("f1").classList.toggle("err",!!a.msg); $("f2").classList.toggle("err",!!b.msg);
+  const ids=["F","O","I","L"];
+  $("target").innerHTML=seq(polyTerms(target()));
+  $("targetLab").textContent = L().gcf ? "Quadratic from Step 1:" : "Polynomial:";
+  $("orig").innerHTML=seq(polyTerms(full()));
+  const gv=$("g3").value.trim(), gOk=/^\d+$/.test(gv);
+  if(!a.terms||!b.terms){
+    $("timesGcf").innerHTML=`<span class="placeholder">—</span>`;
+    ids.forEach(k=>{$("m"+k).innerHTML="";$("r"+k).innerHTML="";});
+    const why=a.msg||b.msg;
+    $("expanded").innerHTML=`<span class="placeholder">${why?why:"Type both factors to see them multiplied."}</span>`;
+    $("product").innerHTML=`<span class="placeholder">—</span>`;
+    return;
+  }
+  const [a1,a2]=a.terms,[b1,b2]=b.terms;
+  const pairs={F:[a1,b1],O:[a1,b2],I:[a2,b1],L:[a2,b2]};
+  const res={};
+  ids.forEach(k=>{
+    const [u,v]=pairs[k]; res[k]=[u[0]*v[0],u[1]+v[1]];
+    $("m"+k).innerHTML=`${par(u[0],u[1])} · ${par(v[0],v[1])}`;
+    $("r"+k).innerHTML="= "+mono(res[k][0],res[k][1]);
+  });
+  $("expanded").innerHTML=seq(ids.map(k=>res[k]),true);
+  const P=mul(a.f,b.f);
+  $("product").innerHTML=seq(polyTerms(P),true,marks||undefined);
+  $("timesGcf").innerHTML = gOk ? seq(polyTerms(P.map(x=>x*+gv)),true)
+    : `<span class="placeholder">—</span>`;
+}
+
+function setFeedback(f,id){
+  const el=$(id||"fb");
+  if(!f){el.className="feedback";el.innerHTML="";return;}
+  el.className="feedback show pop "+f.kind; el.innerHTML=f.html;
+  el.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(+b.dataset.go)));
+  el.querySelectorAll("[data-another]").forEach(b=>b.addEventListener("click",another));
+}
+function render(){renderSteps();renderLevel();}
+
+function go(id){
+  if(id>S.unlocked)return;
+  S.current=id; save(); render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+function another(){
+  const s=st(), lv=L(), old=JSON.stringify(s.prob);
+  const ctx = (!s.solved && s.count>0 && s.meta) ? s.meta : null;   // level 3: finish the same set first
+  let m; do{m=lv.make(ctx)}while(JSON.stringify(m.prob)===old);
+  s.prob=m.prob; s.meta=m.meta||null; s.inputs=["",""]; s.g=["","",""]; s.z=["","","",""]; s.sol={}; s.step1=false; s.factored=false; s.countOk=false; s.zc=""; s.foilOn=false; save(); renderLevel(); $(L().gcf?"g1":"f1").focus();
+}
+
+
+/* Count a correct answer; when it finishes the level, unlock the next one and set off fireworks. */
+function award(html){
+  const s=st(), lv=L();
+  if(!s.solved){
+    s.count=(s.count||0)+1;
+    if(s.count>=lv.need){
+      s.solved=true;
+      if(lv.id<LEVELS.length){ S.unlocked=Math.max(S.unlocked,lv.id+1); html+=` Level ${lv.id+1} is unlocked.`; fireworks(); }
+      else { html+=" You’ve finished every level!"; S.champion=true; setTimeout(showChampion,500); }
+    } else {
+      html+=` That’s ${s.count} of ${lv.need} for Level ${lv.id}.`;
+      if(lv.id===3||lv.id===11) html+=" Next: the same numbers with different signs.";
+    }
+  }
+  save(); renderSteps(); renderIntro();
+  html+=`<div class="row">`;
+  if(s.solved && lv.id<LEVELS.length) html+=`<button type="button" class="btn go" data-go="${lv.id+1}">Go to Level ${lv.id+1}</button>`;
+  html+= s.solved ? `<button type="button" class="btn" data-another>Try another Level ${lv.id} problem</button></div>`
+                  : `<button type="button" class="btn go" data-another>Next problem</button></div>`;
+  return html;
+}
+function factoredText(){
+  const a=parseFactor(st().inputs[0]), b=parseFactor(st().inputs[1]);
+  if(!a.terms||!b.terms) return "";
+  return `(${seq(a.terms)})(${seq(b.terms)})`;
+}
+
+/* ---------- Level 9+: zero product property ---------- */
+function parseNum(raw){
+  let t=String(raw).replace(/[−–—]/g,"-").replace(/\s+/g,"").replace(/^x=/i,"");
+  let m=t.match(/^(-?\d+)$/); if(m) return {n:+m[1],d:1};
+  m=t.match(/^(-?\d+)\/(\d+)$/); if(m&&+m[2]>0) return {n:+m[1],d:+m[2]};
+  return null;
+}
+const sameLin=(f,g)=>(f[0]===g[0]&&f[1]===g[1])||(f[0]===-g[0]&&f[1]===-g[1]);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+/* roots of the true factors, least to greatest, as fractions {n,d} with d > 0 */
+function rootsSorted(){
+  return st().prob.map(f=>{ let n=-f[1], d=f[0]; if(d<0){n=-n;d=-d} const g=gcd(n,d); return {n:n/g,d:d/g}; })
+    .sort((u,v)=>u.n*v.d-v.n*u.d);
+}
+const fmtQ=q=>q.d===1?num(q.n):`${num(q.n)}/${q.d}`;
+/* the solution boxes: two plain boxes, or (Level 13) an integer box and a fraction box in order from least to greatest */
+function renderSolset(){
+  const s=st(); if(!s.sol) s.sol={};
+  const box=(id,label,cls)=>`<input type="text" id="${id}" class="sol${cls?" "+cls:""}" inputmode="numeric" aria-label="${label}" autocomplete="off" value="${(s.sol[id]||"").replace(/"/g,"&quot;")}">`;
+  let inner;
+  const fracBox=(n,d,which)=>`<span class="frac">${box(n,`${which} solution, numerator`)}<span class="bar" aria-hidden="true"></span>${box(d,`${which} solution, denominator`)}</span>`;
+  if(L().fracSol==="both"){
+    inner=fracBox("n1","d1","First")+`<span class="comma" aria-hidden="true">,</span>`+fracBox("n2","d2","Second");
+  } else if(L().fracSol){
+    inner=rootsSorted().map((r,i)=>{
+      const which=i===0?"Smaller":"Larger";
+      return r.d===1 ? box("si",`${which} solution, a whole number`)
+        : `<span class="frac">${box("sn",`${which} solution, numerator`)}<span class="bar" aria-hidden="true"></span>${box("sd",`${which} solution, denominator`)}</span>`;
+    }).join(`<span class="comma" aria-hidden="true">,</span>`);
+  } else {
+    inner=box("s1","First solution")+`<span class="comma" aria-hidden="true">,</span>`+box("s2","Second solution");
+  }
+  $("solbox").innerHTML=`<span class="brace" aria-hidden="true">{</span>${inner}<span class="brace" aria-hidden="true">}</span>`;
+  $("solset").classList.toggle("has-frac",!!L().fracSol);
+}
+/* Substitute x = q into the factor (ax + b) and describe the result */
+function subMsg(q,f,extra){
+  const val=fmtQ(q), rn=f[0]*q.n+f[1]*q.d, rd=q.d, g=gcd(rn,rd);
+  const xs=(q.n<0||q.d>1)&&f[0]!==1?`(${val})`:(q.n<0?`(${val})`:val);
+  return `Check ${val}: substitute it into ${seq([[f[0],1],[f[1],0]])} = 0. You get ${f[0]===1?"":f[0]+" · "}${xs} + ${f[1]<0?"("+num(f[1])+")":f[1]} = ${fmtQ({n:rn/g,d:rd/g})}, not 0.${extra||""}`;
+}
+function countMsg(){
+  return {kind:"good",html:`Right, 2 solutions. ${K()} = 0 is never true, so the GCF doesn’t add a solution. Only the factors with x in them give solutions. Now solve.`};
+}
+/* a typed fraction from two boxes; sign may be on top or bottom */
+function readFrac(nRaw,dRaw){
+  const nn=parseNum(nRaw), dd=parseNum(dRaw);
+  if(!nn||!dd||nn.d!==1||dd.d!==1||dd.n===0) return {err:"type a whole number on the top and a nonzero whole number on the bottom."};
+  return {q:{n:nn.n*Math.sign(dd.n),d:Math.abs(dd.n)}};
+}
+function submitZ(){
+  const s=st(), F=s.prob, lv=L(); if(!s.sol) s.sol={};
+  const v=id=>($(id)?$(id).value.trim():"");
+  const three=lv.solve&&lv.gcf;
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const norm=t=>String(t).replace(/[−–—]/g,"-").replace(/\s+/g,"").replace(/^\((.*)\)$/,"$1");
+  const out=[];
+  const roots=rootsSorted();
+  const eqv=(u,w)=>u.n*w.d===w.n*u.d;
+  const factorFor=r=>F.find(f=>eqv({n:-f[1],d:f[0]},r));
+
+  /* each "= 0" box must hold a factor exactly as the student typed it earlier (spaces and parentheses aside) */
+  function checkZeros(ids,typedRaw){
+    const typed=typedRaw.map(norm), shown=typedRaw.map(t=>`<b>${esc(String(t).trim())}</b>`);
+    const list=shown.length===2?`${shown[0]} or ${shown[1]}`:`${shown[0]}, ${shown[1]}, or ${shown[2]}`;
+    const idx=ids.map(id=>typed.indexOf(norm(v(id))));
+    idx.forEach((k,i)=>{ if(k<0) out.push(`Box ${i+1}: copy one of your factors exactly as you typed it, ${list}.`); });
+    if(new Set(idx.filter(k=>k>=0)).size<idx.filter(k=>k>=0).length) out.push("You used the same factor more than once. Put each factor in its own box.");
+  }
+
+  /* ----- Level 16, Step 3: three factors and how many solutions ----- */
+  if(three && !s.countOk){
+    if(["z1","z2","z3","zc"].some(id=>!v(id)))
+      return setFeedback({kind:"info",html:"Fill in all three factors and answer how many solutions there are."},"fbz");
+    checkZeros(["z1","z2","z3"],[s.g[2],s.inputs[0],s.inputs[1]]);
+    const c=parseNum(v("zc"));
+    if(!out.length){
+      if(!c||c.d!==1) out.push("Type a whole number for how many solutions there are.");
+      else if(c.n===3) out.push(`Look at <b>${K()} = 0</b>. No value of x can make ${K()} equal 0, so that equation has no solution. The GCF doesn’t give a solution; only the factors with x in them do.`);
+      else if(c.n!==2) out.push("Each factor that contains x gives one solution. How many of your factors contain x?");
+    }
+    if(out.length) return setFeedback({kind:"bad",html:`<span class="head">Not quite. Here’s what to check:</span><ul>${out.map(x=>`<li>${x}</li>`).join("")}</ul>`},"fbz");
+    s.countOk=true; save(); renderLevel();
+    const first=$("solbox").querySelector("input"); if(first) first.focus();
+    return;
+  }
+
+  /* ----- solution set (and, for Levels 9–15, the two factors) ----- */
+  const boxes=lv.fracSol==="both"?["n1","d1","n2","d2"]:lv.fracSol?["si","sn","sd"]:["s1","s2"];
+  const zIds=three?[]:["z1","z2"];
+  if(zIds.some(id=>!v(id))||boxes.some(id=>!v(id)))
+    return setFeedback({kind:"info",html: three?"Fill in both solutions."
+      : lv.fracSol==="both"?"Fill in every box: each factor equal to zero, and the top and bottom of both fractions."
+      : lv.fracSol?"Fill in every box: each factor equal to zero, the whole-number solution, and the top and bottom of the fraction."
+      :"Fill in all four boxes: each factor equal to zero, and both solutions."},"fbz");
+  if(!three) checkZeros(["z1","z2"],s.inputs);
+
+  /* a wrong fraction: substitute it, with a hint for a sign slip or an upside-down fraction */
+  function fracMiss(q,among){
+    for(const r of among){
+      if(eqv({n:-q.n,d:q.d},r)) return subMsg(q,factorFor(r)," Look closely at the sign.");
+      if(q.n!==0 && (eqv({n:q.d*Math.sign(q.n),d:Math.abs(q.n)},r)||eqv({n:-q.d*Math.sign(q.n),d:Math.abs(q.n)},r)))
+        return subMsg(q,factorFor(r)," Check which number goes on top of the fraction.");
+    }
+    return subMsg(q,factorFor(among[0]));
+  }
+
+  if(lv.fracSol==="both"){
+    const qs=[["n1","d1"],["n2","d2"]].map(([n,d])=>readFrac(v(n),v(d)));
+    qs.forEach((x,i)=>{
+      if(x.err){ out.push(`Fraction ${i+1}: ${x.err}`); return; }
+      if(roots.some(r=>eqv(r,x.q))){ if(gcd(x.q.n,x.q.d)!==1) out.push(`Fraction ${i+1} is equal to a solution. Write it in simplest form.`); return; }
+      out.push(fracMiss(x.q,roots));
+    });
+    if(qs.every(x=>x.q)&&eqv(qs[0].q,qs[1].q)&&!out.length) out.push("Your two solutions are the same. Each factor gives its own solution.");
+  } else if(lv.fracSol){
+    /* Level 13: the boxes are in order from least to greatest, so each must hold its own root */
+    const intRoot=roots.find(r=>r.d===1), fracRoot=roots.find(r=>r.d!==1);
+    const iv=parseNum(v("si"));
+    if(!iv) out.push("The whole-number box needs a whole number, like 4 or −2.");
+    else if(!eqv(iv,intRoot)) out.push(subMsg(iv,factorFor(intRoot),eqv({n:-iv.n,d:iv.d},intRoot)?" Look closely at the sign.":""));
+    const x=readFrac(v("sn"),v("sd"));
+    if(x.err) out.push("For the fraction, "+x.err);
+    else if(eqv(x.q,fracRoot)){ if(gcd(x.q.n,x.q.d)!==1) out.push("Your fraction is equal to the solution. Write it in simplest form."); }
+    else out.push(fracMiss(x.q,[fracRoot]));
+  } else {
+    const sols=["s1","s2"].map(id=>({raw:v(id),v:parseNum(v(id))}));
+    sols.forEach((x,i)=>{
+      if(!x.v){ out.push(`Solution ${i+1}: type a number, like 4 or −2.`); return; }
+      if(roots.some(r=>eqv(r,x.v))) return;
+      const flip=roots.find(r=>eqv(r,{n:-x.v.n,d:x.v.d}));
+      out.push(subMsg(x.v,flip?factorFor(flip):F[0],flip?" Look closely at the sign.":""));
+    });
+    if(sols[0].v&&sols[1].v&&eqv(sols[0].v,sols[1].v)&&!out.length) out.push("Your two solutions are the same. Each factor gives its own solution.");
+  }
+  if(out.length) return setFeedback({kind:"bad",html:`<span class="head">Not quite. Here’s what to check:</span><ul>${out.map(x=>`<li>${x}</li>`).join("")}</ul>`},"fbz");
+  setFeedback({kind:"good",html:award(`Correct! The solutions of ${seq(polyTerms(full()))} = 0 are x = ${fmtQ(roots[0])} and x = ${fmtQ(roots[1])}.`)},"fbz");
+}
+
+/* ---------- Champion page after Level 16 ---------- */
+const isChamp=()=>!!S.champion || LEVELS.every(l=>S.lv[l.id]&&S.lv[l.id].solved);
+$("champBtn").addEventListener("click",showChampion);
+function showChampion(){
+  renderSteps();
+  $("champ").hidden=false; document.body.style.overflow="hidden";
+  $("champClose").focus();
+  fireworks(5600);                                   // twice as long as a level
+}
+function hideChampion(){
+  $("champ").hidden=true; document.body.style.overflow="";
+}
+$("champClose").addEventListener("click",hideChampion);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("champ").hidden) hideChampion(); });
+
+/* ---------- Fireworks when a level is finished ---------- */
+function fireworks(dur){
+  dur=dur||2800;
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv=$("fx"), cx=cv.getContext("2d"), dpr=window.devicePixelRatio||1;
+  const W=cv.width=innerWidth*dpr, H=cv.height=innerHeight*dpr;
+  const colors=["#FFCB05","#2D68C4","#E8A800","#1FA463","#E5534B","#00274C"];
+  const parts=[], rockets=[];
+  const nR=Math.round(4*dur/2800), gap=Math.max(260,(dur-1700)/nR);
+  for(let i=0;i<nR;i++) rockets.push({x:W*(.15+.7*Math.random()),y:H,ty:H*(.15+.35*Math.random()),vy:-H*(.018+.006*Math.random()),delay:i*gap,c:colors[i%colors.length]});
+  const start=performance.now();
+  function burst(x,y,c){
+    const n=70;
+    for(let i=0;i<n;i++){
+      const a=Math.PI*2*i/n+Math.random()*.2, sp=(2.2+Math.random()*3.2)*dpr;
+      parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c:Math.random()<.7?c:colors[(Math.random()*colors.length)|0]});
+    }
+  }
+  function frame(t){
+    const el=t-start;
+    cx.globalCompositeOperation="destination-out"; cx.fillStyle="rgba(0,0,0,.28)"; cx.fillRect(0,0,W,H);
+    cx.globalCompositeOperation="source-over";
+    rockets.forEach(r=>{
+      if(r.done||el<r.delay) return;
+      r.y+=r.vy; cx.fillStyle=r.c; cx.beginPath(); cx.arc(r.x,r.y,2.4*dpr,0,7); cx.fill();
+      if(r.y<=r.ty){ r.done=true; burst(r.x,r.y,r.c); }
+    });
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.06*dpr; p.vx*=.985; p.vy*=.985; p.life-=.012;
+      if(p.life>0){ cx.globalAlpha=Math.max(0,p.life); cx.fillStyle=p.c; cx.beginPath(); cx.arc(p.x,p.y,2*dpr,0,7); cx.fill(); }
+    }
+    cx.globalAlpha=1;
+    if(el<dur) requestAnimationFrame(frame); else cx.clearRect(0,0,W,H);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Step 1: factor out the GCF ---------- */
+function parsePoly(raw){
+  let s=String(raw).replace(/[−–—]/g,"-").replace(/\s+/g,"").replace(/X/g,"x").replace(/\*/g,"").replace(/²/g,"^2");
+  if(/^\(.*\)$/.test(s)) s=s.slice(1,-1);
+  if(!s) return {empty:true};
+  const parts=s.match(/[+-]?[^+-]+/g);
+  if(!parts||parts.join("")!==s) return {msg:"Use only numbers, x, ^, +, and −."};
+  const c=[0,0,0];
+  for(const t of parts){
+    const m=t.match(/^([+-]?)(\d*)(x(\^?2)?)?$/);
+    if(!m||(!m[2]&&!m[3])) return {msg:`“${t.replace(/-/g,MINUS)}” isn’t a term I can read. Type x² as x^2.`};
+    const k=(m[1]==="-"?-1:1)*(m[2]===""?1:parseInt(m[2],10));
+    c[m[3]?(m[4]?0:1):2]+=k;
+  }
+  return {c};
+}
+function setFb1(f){
+  const el=$("fb1");
+  if(!f){el.className="feedback";el.innerHTML="";return;}
+  el.className="feedback show "+f.kind; el.innerHTML=f.html;
+}
+function step1Done(){
+  return {kind:"good",html:`Step 1 done! ${seq(polyTerms(full()))} = ${K()}(${seq(polyTerms(target()))}). Now factor completely in Step 2.`};
+}
+function submit1(){
+  const s=st(), k=K(), T=full(), inner=target();
+  const gs=$("g1").value.trim(), q=parsePoly($("g2").value);
+  const list=T.filter(x=>x!==0).map(num); const listTxt=list.slice(0,-1).join(", ")+", and "+list[list.length-1];
+  if(!gs||q.empty) return setFb1({kind:"info",html:"Fill in both boxes: the GCF in front and the quadratic inside the parentheses."});
+  if(!/^\d+$/.test(gs)||+gs<1) return setFb1({kind:"info",html:"The GCF should be a positive whole number."});
+  if(q.msg) return setFb1({kind:"info",html:q.msg});
+  const g=+gs;
+  if(g!==k){
+    const divides=T.every(x=>x%g===0);
+    const msg = !divides ? `${g} doesn’t go into every term evenly. The GCF has to divide ${listTxt}.`
+      : g===1 ? `Every polynomial has 1 as a factor, but these terms share a larger one. Look for the greatest number that divides ${listTxt}.`
+      : `${g} goes into every term, but it isn’t the <em>greatest</em> common factor. Look for a larger number that divides ${listTxt}.`;
+    return setFb1({kind:"bad",html:`<span class="head">Not quite.</span>${msg}`});
+  }
+  if(same(q.c,inner)){
+    s.step1=true; s.g[2]=""; save(); renderLevel(); $("g3").focus(); return;
+  }
+  const names=["x² term","x term","number term"], pw=[2,1,0], out=[];
+  [0,1,2].forEach(i=>{
+    if(q.c[i]===inner[i]) return;
+    if(q.c[i]===0) out.push(`Your quadratic is missing the ${names[i]}. The original polynomial has <b>${mono(T[i],pw[i])}</b>.`);
+    else out.push(`Check the ${names[i]}: ${g} · ${par(q.c[i],pw[i])} = <b>${mono(g*q.c[i],pw[i])}</b>, but the original polynomial has <b>${mono(T[i],pw[i])}</b>.`);
+  });
+  setFb1({kind:"bad",html:`<span class="head">Your GCF is right. Now check the quadratic inside the parentheses:</span><ul>${out.map(x=>`<li>${x}</li>`).join("")}</ul>`});
+}
+
+/* ---------- Checking ---------- */
+function submit(){
+  const a=parseFactor($("f1").value), b=parseFactor($("f2").value);
+  if(a.empty||b.empty){marks=null;renderFoil();setFeedback({kind:"info",html:"Type both factors before you submit."});return;}
+  if(!a.terms||!b.terms){marks=null;renderFoil();setFeedback({kind:"info",html:(a.msg||b.msg)});return;}
+  const T=target(), P=mul(a.f,b.f);
+  marks=[0,1,2].map(i=>P[i]===T[i]?"ok":"no");
+  renderFoil();
+  const gcfLevel=!!L().gcf, gv=$("g3").value.trim(), k=K();
+  const gcfIssue = !gcfLevel ? null
+    : !gv ? `Don’t forget your GCF! Write the <b>${k}</b> you factored out in Step 1 in the first box. Without it, your answer equals ${seq(polyTerms(T))}, not ${seq(polyTerms(full()))}.`
+    : (+gv!==k || !/^\d+$/.test(gv)) ? `The number in the first box should be the GCF you factored out in Step 1.`
+    : null;
+  if(same(P,T) && gcfIssue){
+    setFeedback({kind:"bad",html:`<span class="head">Your binomials are right, but your answer isn’t complete.</span>${gcfIssue}`});
+    return;
+  }
+  if(same(P,T)){
+    if(L().solve){ if(L().gcf) st().factored=true; else st().step1=true; save(); renderLevel(); $("z1").focus(); return; }
+    const factored=`${gcfLevel?k:""}${factoredText()}`;
+    setFeedback({kind:"good",html:award(`Correct! ${factored} = ${seq(polyTerms(full()))}.`)});
+    return;
+  }
+  const list=issues(P,T); if(gcfIssue) list.push(gcfIssue);
+  if(L().solve && !st().foilOn){ st().foilOn=true; save(); $("foil").hidden=false; }   // Level 9+: show FOIL after a wrong factoring
+  setFeedback({kind:"bad",html:`<span class="head">Not quite. Here’s what to check:</span><ul>${list.map(x=>`<li>${x}</li>`).join("")}</ul>`});
+}
+
+function issues(P,T){
+  const out=[];
+  const tl=t=>`<span class="tag" style="color:var(--c${t})">${t}</span>`;
+  if(P[0]!==T[0]){
+    out.push(`${tl("F")} Your first terms multiply to <b>${mono(P[0],2)}</b>, but the polynomial starts with <b>${mono(T[0],2)}</b>. Check the x term in each factor.`);
+  }
+  if(P[2]!==T[2]){
+    let tip;
+    if(P[2]===-T[2]) tip = T[2]<0
+      ? "The last term is negative, so the signs must be different: one factor gets +, the other gets −."
+      : "The last term is positive, so both factors need the same sign.";
+    else tip=`Find two numbers that multiply to <b>${num(T[2])}</b>.`;
+    out.push(`${tl("L")} Your last terms multiply to <b>${num(P[2])}</b>, but the polynomial’s last term is <b>${num(T[2])}</b>. ${tip}`);
+  }
+  if(P[1]!==T[1]){
+    let tip;
+    if(P[2]===T[2] && P[1]===-T[1]) tip="Your numbers multiply correctly, but their signs are flipped. Change the sign in each factor.";
+    else if(T[0]===1) tip=`The two numbers in your factors need to add to <b>${num(T[1])}</b> as well as multiply to <b>${num(T[2])}</b>.`;
+    else if(P[0]===T[0] && P[2]===T[2]) tip="Your first and last terms are right. Try a different arrangement: switch which number goes with which x term, or try another pair of numbers with the same product.";
+    else tip=`The outer and inner products need to combine to <b>${mono(T[1],1)}</b>.`;
+    out.push(`${tl("O")} + ${tl("I")} Your outer and inner terms combine to <b>${mono(P[1],1)}</b>, but the polynomial’s middle term is <b>${mono(T[1],1)}</b>. ${tip}`);
+  }
+  return out;
+}
+
+/* ---------- Events ---------- */
+["f1","f2"].forEach((id,i)=>{
+  $(id).addEventListener("input",()=>{ st().inputs[i]=$(id).value; save(); marks=null; setFeedback(null); renderFoil(); });
+  $(id).addEventListener("keydown",e=>{ if(e.key==="Enter"){ if(id==="f1") $("f2").focus(); else submit(); }});
+});
+$("submit").addEventListener("click",submit);
+["g1","g2"].forEach((id,i)=>{
+  $(id).addEventListener("input",()=>{ st().g[i]=$(id).value; save(); setFb1(null); });
+  $(id).addEventListener("keydown",e=>{ if(e.key==="Enter"){ if(id==="g1") $("g2").focus(); else submit1(); }});
+});
+$("g3").addEventListener("input",()=>{ st().g[2]=$("g3").value; save(); marks=null; setFeedback(null); renderFoil(); });
+$("g3").addEventListener("keydown",e=>{ if(e.key==="Enter") $("f1").focus(); });
+$("submit1").addEventListener("click",submit1);
+["z1","z2","z3"].forEach((id,i)=>{
+  $(id).addEventListener("input",()=>{ st().z[i]=$(id).value; save(); setFeedback(null,"fbz"); });
+});
+$("zc").addEventListener("input",()=>{ st().zc=$("zc").value; save(); setFeedback(null,"fbz"); });
+$("solbox").addEventListener("input",e=>{ const s=st(); if(!s.sol) s.sol={}; s.sol[e.target.id]=e.target.value; save(); setFeedback(null,"fbz"); });
+/* Enter moves through the Step 2 boxes, then submits */
+$("zeroStep").addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||e.target.tagName!=="INPUT") return;
+  const all=[...$("zeroStep").querySelectorAll("input")].filter(x=>x.offsetParent!==null&&!x.disabled), i=all.indexOf(e.target);
+  if(i<all.length-1) all[i+1].focus(); else submitZ();
+});
+$("submitZ").addEventListener("click",submitZ);
+$("reset").addEventListener("click",()=>{$("reset").hidden=true;$("confirm").hidden=false;$("resetNo").focus();});
+$("resetNo").addEventListener("click",()=>{$("confirm").hidden=true;$("reset").hidden=false;$("reset").focus();});
+$("resetYes").addEventListener("click",()=>{S=fresh();save();render();$("confirm").hidden=true;$("reset").hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
+
+if(S.current>S.unlocked) S.current=S.unlocked;
+render();
+})();
+</script>
+</body>
+</html>
