@@ -120,6 +120,12 @@ main.wrap{padding-top:1.5rem;padding-bottom:2rem}
 @keyframes rise{0%{transform:translateY(30px) scale(.6);opacity:0}100%{transform:none;opacity:1}}
 .steps .champpill{background:var(--maize);color:#00274C;border-color:var(--maize);font-weight:700}
 .toprow{display:flex;align-items:center;justify-content:space-between;gap:.8rem 1rem;flex-wrap:wrap}
+.toprt{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.teachtag{border:1.5px dashed var(--maize);color:var(--maize);border-radius:999px;padding:.3rem .8rem;font-weight:700;font-size:.9rem;white-space:nowrap}
+.teachbox{border-color:var(--accent)}
+.teachbox p{font-weight:400}
+.teachbox input{font:inherit;padding:.5rem .7rem;border-radius:8px;border:2px solid var(--line);background:var(--field);color:var(--ink);width:12rem}
+.teachbox .teachmsg{margin:.6rem 0 0;color:var(--bad);font-weight:700;min-height:1.2em}
 .champbtn{border:0;border-radius:999px;background:var(--maize);color:#00274C;font-weight:700;padding:.45rem 1rem;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.25);white-space:nowrap}
 .stephead{display:flex;align-items:center;gap:.6rem;margin:0 0 .8rem;font-size:1.15rem}
 .badge{background:var(--maize);color:#00274C;border-radius:999px;padding:.1rem .7rem;font-family:var(--display);font-weight:800;font-size:.95rem}
@@ -178,7 +184,10 @@ footer{text-align:center;padding:0 1rem 2rem}
   <div class="wrap">
     <div class="toprow">
       <h1>Factoring <span class="hl">Quadratics</span></h1>
-      <button type="button" class="champbtn" id="champBtn" hidden>🏆 Champion page</button>
+      <div class="toprt">
+        <span class="teachtag" id="teachTag" hidden>Teacher preview</span>
+        <button type="button" class="champbtn" id="champBtn" hidden>🏆 Champion page</button>
+      </div>
     </div>
     <ol class="steps" id="steps" aria-label="Levels"></ol>
   </div>
@@ -286,6 +295,16 @@ footer{text-align:center;padding:0 1rem 2rem}
 
 <footer>
   <button class="btn quiet" id="reset">Start over from Level 1</button>
+  <button class="btn quiet" id="teachBtn">Teacher</button>
+  <div class="confirm teachbox" id="teachBox" hidden>
+    <p>Teacher preview unlocks every level on this device. Enter the passphrase.</p>
+    <div class="row">
+      <input type="password" id="teachPass" aria-label="Teacher passphrase" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="button" class="btn" id="teachGo">Unlock</button>
+      <button type="button" class="btn quiet" id="teachCancel">Cancel</button>
+    </div>
+    <p class="teachmsg" id="teachMsg" role="status"></p>
+  </div>
   <div class="confirm" id="confirm" hidden role="alertdialog" aria-labelledby="confirmText">
     <p id="confirmText">Start over? This clears your progress and locks the later levels again.</p>
     <div class="row">
@@ -453,6 +472,12 @@ function parseFactor(raw){
 
 /* ---------- State ---------- */
 const KEY="factoring-challenge-v3";
+/* Teacher preview: unlocks every level on this device without marking anything solved.
+   The passphrase is stored only as a hash so it doesn't appear in the page source. */
+const TKEY="factoring-teacher", TEACH_HASH="fa187655";
+let teacher=false; try{ teacher=localStorage.getItem(TKEY)==="1"; }catch(e){}
+const hashPass=t=>{ let h=0x811c9dc5; for(const c of t){ h^=c.charCodeAt(0); h=Math.imul(h,0x01000193)>>>0; } return h.toString(16); };
+const UNL=()=>teacher?LEVELS.length:S.unlocked;          // highest level a student may open
 /* Version 2 saves had 16 levels. A new Level 5 and Level 14 were added, so old levels move to new numbers. */
 const OLD_KEY="factoring-challenge-v2", OLD_MAP={1:1,2:2,3:3,4:4,5:6,6:7,7:8,8:9,9:10,10:11,11:12,12:13,13:15,14:16,15:17,16:18};
 function migrate(o){
@@ -489,10 +514,10 @@ function renderSteps(){
   $("steps").innerHTML="";
   LEVELS.forEach(lv=>{
     const li=document.createElement("li"),b=document.createElement("button");
-    b.innerHTML=`<span class="n">${lv.id<=S.unlocked?lv.id:"🔒"}</span>${lv.short}`;
+    b.innerHTML=`<span class="n">${lv.id<=UNL()?lv.id:"🔒"}</span>${lv.short}`;
     if(S.lv[lv.id].solved) b.classList.add("done");
     if(lv.id===S.current) b.setAttribute("aria-current","step");
-    if(lv.id>S.unlocked){b.disabled=true;b.title="Solve the level before this one to unlock it.";}
+    if(lv.id>UNL()){b.disabled=true;b.title="Solve the level before this one to unlock it.";}
     b.addEventListener("click",()=>go(lv.id));
     li.appendChild(b);$("steps").appendChild(li);
     if(lv.id===S.current) requestAnimationFrame(()=>{ const c=$("steps"); c.scrollLeft=Math.max(0,li.offsetLeft-c.clientWidth/2+li.offsetWidth/2); });
@@ -591,7 +616,7 @@ function setFeedback(f,id){
 function render(){renderSteps();renderLevel();}
 
 function go(id){
-  if(id>S.unlocked)return;
+  if(id>UNL())return;
   S.current=id; save(); render(); window.scrollTo({top:0,behavior:"smooth"});
 }
 function another(){
@@ -786,7 +811,7 @@ function submitZ(){
 }
 
 /* ---------- Champion page after the last level ---------- */
-const isChamp=()=>!!S.champion || LEVELS.every(l=>S.lv[l.id]&&S.lv[l.id].solved);
+const isChamp=()=>teacher || !!S.champion || LEVELS.every(l=>S.lv[l.id]&&S.lv[l.id].solved);
 $("champBtn").addEventListener("click",showChampion);
 function showChampion(){
   renderSteps();
@@ -957,6 +982,30 @@ $("submit").addEventListener("click",submit);
 $("g3").addEventListener("input",()=>{ st().g[2]=$("g3").value; save(); marks=null; setFeedback(null); renderFoil(); });
 $("g3").addEventListener("keydown",e=>{ if(e.key==="Enter") $("f1").focus(); });
 $("submit1").addEventListener("click",submit1);
+/* ---------- Teacher preview ---------- */
+function applyTeacherUI(){
+  $("teachTag").hidden=!teacher;
+  $("teachBtn").textContent=teacher?"Exit teacher preview":"Teacher";
+}
+function setTeacher(on){
+  teacher=on;
+  try{ if(on) localStorage.setItem(TKEY,"1"); else localStorage.removeItem(TKEY); }catch(e){}
+  if(!on && S.current>S.unlocked){ S.current=S.unlocked; save(); }
+  applyTeacherUI(); render();
+}
+function tryTeacher(){
+  if(hashPass($("teachPass").value.trim().toLowerCase())===TEACH_HASH){
+    $("teachPass").value=""; $("teachMsg").textContent=""; $("teachBox").hidden=true; $("teachBtn").hidden=false;
+    setTeacher(true);
+  } else { $("teachMsg").textContent="That passphrase isn’t right."; $("teachPass").select(); }
+}
+$("teachBtn").addEventListener("click",()=>{
+  if(teacher){ setTeacher(false); return; }
+  $("teachBox").hidden=false; $("teachBtn").hidden=true; $("teachMsg").textContent=""; $("teachPass").focus();
+});
+$("teachGo").addEventListener("click",tryTeacher);
+$("teachPass").addEventListener("keydown",e=>{ if(e.key==="Enter") tryTeacher(); });
+$("teachCancel").addEventListener("click",()=>{ $("teachBox").hidden=true; $("teachBtn").hidden=false; $("teachPass").value=""; $("teachBtn").focus(); });
 ["z1","z2","z3"].forEach((id,i)=>{
   $(id).addEventListener("input",()=>{ st().z[i]=$(id).value; save(); setFeedback(null,"fbz"); });
 });
@@ -973,7 +1022,8 @@ $("reset").addEventListener("click",()=>{$("reset").hidden=true;$("confirm").hid
 $("resetNo").addEventListener("click",()=>{$("confirm").hidden=true;$("reset").hidden=false;$("reset").focus();});
 $("resetYes").addEventListener("click",()=>{S=fresh();save();render();$("confirm").hidden=true;$("reset").hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
 
-if(S.current>S.unlocked) S.current=S.unlocked;
+if(S.current>UNL()) S.current=UNL();
+applyTeacherUI();
 render();
 })();
 </script>
