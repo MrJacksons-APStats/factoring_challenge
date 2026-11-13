@@ -332,14 +332,17 @@ const LEVELS=[
   {id:4,need:2,short:"Level 4",title:"Level 4: No middle term",
    blurb:"These polynomials have no x term. Think about what the outer and inner products must add up to.",
    make(){ const b=rand(2,12); return {prob:[[1,-b],[1,b]]}; }},
-  {id:5,need:2,short:"Level 5",title:"Level 5: A lead coefficient",
+  {id:5,need:2,short:"Level 5",title:"Level 5: No constant",
+   blurb:"These polynomials have no constant. Notice that every term has an x value. Could just x be one of the factors?",
+   make(){ return {prob:[[1,0],[1,sgn()*rand(2,12)]]}; }},
+  {id:6,need:2,short:"Level 6",title:"Level 6: A lead coefficient",
    blurb:"Now the x² term has a coefficient. One factor starts with 2x or 3x, and the other starts with x. Which numbers you choose, and where you put them, both change the middle term.",
    make(){
      let a,b,c,f;
      do{ a=rand(2,3); b=pickB(a,8); c=rand(1,6); f=[[a,sgn()*b],[1,sgn()*c]]; }while(mul(f[0],f[1])[1]===0);
      return {prob:f};
    }},
-  {id:6,need:2,short:"Level 6",title:"Level 6: Two lead coefficients",
+  {id:7,need:2,short:"Level 7",title:"Level 7: Two lead coefficients",
    blurb:"Now neither factor starts with just x. Think about which x terms multiply to the first term and which numbers multiply to the last term, then test where they go.",
    make(){
      let a,b,c,d,f;
@@ -349,38 +352,41 @@ const LEVELS=[
      }while((a===c && b===-d) || mul(f[0],f[1])[1]===0);   // no conjugates (difference of squares)
      return {prob:f};
    }},
-  {id:7,need:2,short:"Level 7",title:"Level 7: No middle term, with a lead coefficient",
+  {id:8,need:2,short:"Level 8",title:"Level 8: No middle term, with a lead coefficient",
    blurb:"These polynomials have no x term, and the x² term has a coefficient. Use what you learned in Level 4.",
    make(){ const a=rand(2,3), b=pickB(a,10); return {prob:[[a,-b],[a,b]]}; }},
-  {id:8,need:2,gcf:true,short:"Level 8",title:"Level 8: Factor out the GCF first",
+  {id:9,need:2,gcf:true,short:"Level 9",title:"Level 9: Factor out the GCF first",
    blurb:"Every term in these polynomials shares a common factor. Step 1: factor out the greatest common factor (GCF). Step 2: factor the quadratic that’s left.",
    make(){
      const k=rand(2,6); let a,b;
      do{ a=sgn()*rand(1,6); b=sgn()*rand(1,6); }while(b===-a);
      return {prob:[[1,a],[1,b]],meta:{k}};
    }},
-  {id:9,need:2,solve:true,short:"Level 9",title:"Level 9: Solve by factoring",
+  {id:10,need:2,solve:true,short:"Level 10",title:"Level 10: Solve by factoring",
    blurb:"Now the quadratic is set equal to zero. Step 1: factor it. Step 2: if two factors multiply to zero, one of them must be zero. Set each factor equal to zero and solve.",
    make(){ let a=rand(1,6),b; do{b=rand(1,6)}while(b===a); return {prob:[[1,a],[1,b]]}; }},
-  {id:10,need:2,solve:true,short:"Level 10",title:"Level 10: Solve by factoring, one factor subtracts",
-   blurb:"Same steps as Level 9, with Level 2 quadratics. The last term is negative, so one factor has a + and the other has a −. Watch the signs when you solve.",
-   make(){ return LEVELS[1].make(); }},
-  {id:11,need:2,solve:true,short:"Level 11",title:"Level 11: Solve by factoring, same numbers, any signs",
-   blurb:"Same steps as Level 9, with Level 3 quadratics. You’ll solve two equations with the same numbers but different signs, so pay close attention to the signs.",
-   make(ctx){ return LEVELS[2].make(ctx); }},
-  {id:12,need:2,solve:true,short:"Level 12",title:"Level 12: Solve by factoring, no middle term",
-   blurb:"Same steps as Level 9, with Level 4 quadratics. There’s no x term, so think about what the outer and inner products must add up to.",
-   make(){ return LEVELS[3].make(); }},
-  {id:13,need:2,solve:true,fracSol:true,short:"Level 13",title:"Level 13: Solve by factoring, a lead coefficient",
-   blurb:"Same steps as Level 9, with Level 5 quadratics. One solution is an integer and one is a fraction. Write the solutions from least to greatest.",
-   make(){ return LEVELS[4].make(); }},
-  {id:14,need:2,solve:true,fracSol:"both",short:"Level 14",title:"Level 14: Solve by factoring, two lead coefficients",
-   blurb:"Same steps as Level 9, with Level 6 quadratics. Both solutions are fractions, and you can write them in either order.",
-   make(){ let m; do{ m=LEVELS[5].make(); }while(m.prob[0][0]===m.prob[1][0] && m.prob[0][1]===m.prob[1][1]); return m; }},   // no repeated factor, so two different solutions
-  {id:15,need:2,solve:true,fracSol:"both",short:"Level 15",title:"Level 15: Solve by factoring, no middle term with a lead coefficient",
-   blurb:"Same steps as Level 9, with Level 7 quadratics. Both solutions are fractions, and you can write them in either order.",
-   make(){ return LEVELS[6].make(); }},
-  {id:16,need:2,solve:true,gcf:true,short:"Level 16",title:"Level 16: Solve with a GCF",
+  {id:11,need:2,solve:true,short:"Level 11",title:"Level 11: Solve by factoring, one factor subtracts",
+   blurb:"Same steps as Level 10, with Level 2 quadratics. The last term is negative, so one factor has a + and the other has a −. Watch the signs when you solve.",
+   make(){ return byId(2).make(); }},
+  {id:12,need:2,solve:true,short:"Level 12",title:"Level 12: Solve by factoring, same numbers, any signs",
+   blurb:"Same steps as Level 10, with Level 3 quadratics. You’ll solve two equations with the same numbers but different signs, so pay close attention to the signs.",
+   make(ctx){ return byId(3).make(ctx); }},
+  {id:13,need:2,solve:true,short:"Level 13",title:"Level 13: Solve by factoring, no middle term",
+   blurb:"Same steps as Level 10, with Level 4 quadratics. There’s no x term, so think about what the outer and inner products must add up to.",
+   make(){ return byId(4).make(); }},
+  {id:14,need:2,solve:true,short:"Level 14",title:"Level 14: Solve by factoring, no constant",
+   blurb:"Same steps as Level 10, with Level 5 quadratics. These equations have no constant, so just x can be one of the factors. When you set x equal to zero, remember that 0 counts as a solution.",
+   make(){ return byId(5).make(); }},
+  {id:15,need:2,solve:true,fracSol:true,short:"Level 15",title:"Level 15: Solve by factoring, a lead coefficient",
+   blurb:"Same steps as Level 10, with Level 6 quadratics. One solution is an integer and one is a fraction. Write the solutions from least to greatest.",
+   make(){ return byId(6).make(); }},
+  {id:16,need:2,solve:true,fracSol:"both",short:"Level 16",title:"Level 16: Solve by factoring, two lead coefficients",
+   blurb:"Same steps as Level 10, with Level 7 quadratics. Both solutions are fractions, and you can write them in either order.",
+   make(){ let m; do{ m=byId(7).make(); }while(m.prob[0][0]===m.prob[1][0] && m.prob[0][1]===m.prob[1][1]); return m; }},   // no repeated factor, so two different solutions
+  {id:17,need:2,solve:true,fracSol:"both",short:"Level 17",title:"Level 17: Solve by factoring, no middle term with a lead coefficient",
+   blurb:"Same steps as Level 10, with Level 8 quadratics. Both solutions are fractions, and you can write them in either order.",
+   make(){ return byId(8).make(); }},
+  {id:18,need:2,solve:true,gcf:true,short:"Level 18",title:"Level 18: Solve with a GCF",
    blurb:"Step 1: factor out the GCF. Step 2: factor completely. Step 3: set every factor equal to zero and decide how many solutions there are. Step 4: solve.",
    make(){
      const k=rand(2,6); let a,b;
@@ -388,6 +394,7 @@ const LEVELS=[
      return {prob:[[1,a],[1,b]],meta:{k}};
    }}
 ];
+const byId=id=>LEVELS.find(l=>l.id===id);
 function sgn(){ return Math.random()<.5?1:-1; }
 /* a number from 1 to max that is not a multiple of a, so (ax + b) has no common factor */
 function pickB(a,max){ let b; do{b=rand(1,max)}while(b%a===0); return b; }
@@ -433,7 +440,11 @@ function parseFactor(raw){
     const sign=m[1]==="-"?-1:1, c=sign*(m[2]===""?1:parseInt(m[2],10));
     terms.push([c,m[3]?1:0]);
   }
-  if(terms.length!==2) return {msg: terms.length<2 ? "Each factor needs two terms, like x + 3." : "Each factor should have just two terms, like x + 3."};
+  if(terms.length===1){                                   // a factor that is just an x term, like x
+    if(terms[0][1]!==1) return {msg:"Each factor needs an x term, like x + 3."};
+    return {terms, f:[terms[0][0],0]};
+  }
+  if(terms.length!==2) return {msg:"Each factor should have just two terms, like x + 3."};
   if(terms[0][1]===terms[1][1]) return {msg: terms[0][1] ? "Each factor needs an x term and a number." : "Each factor needs an x term, like x + 3."};
   /* Terms stay in the order the student typed, so F, O, I, L follow their order. f is [x coefficient, number]. */
   const xt=terms.find(t=>t[1]===1), ct=terms.find(t=>t[1]===0);
@@ -441,7 +452,16 @@ function parseFactor(raw){
 }
 
 /* ---------- State ---------- */
-const KEY="factoring-challenge-v2";
+const KEY="factoring-challenge-v3";
+/* Version 2 saves had 16 levels. A new Level 5 and Level 14 were added, so old levels move to new numbers. */
+const OLD_KEY="factoring-challenge-v2", OLD_MAP={1:1,2:2,3:3,4:4,5:6,6:7,7:8,8:9,9:10,10:11,11:12,12:13,13:15,14:16,15:17,16:18};
+function migrate(o){
+  if(!o||!o.lv) return null;
+  const n={unlocked:OLD_MAP[o.unlocked]||1,current:OLD_MAP[o.current]||1,lv:{},
+    champion:!!o.champion||Object.keys(OLD_MAP).every(k=>o.lv[k]&&o.lv[k].solved)};
+  for(const k in OLD_MAP) if(o.lv[k]) n.lv[OLD_MAP[k]]=o.lv[k];
+  return n;
+}
 function newLevel(L){ const m=L.make(); return {prob:m.prob,meta:m.meta||null,solved:false,count:0,inputs:["",""],g:["","",""],z:["","","",""],step1:false}; }
 function fresh(){
   const s={unlocked:1,current:1,lv:{}};
@@ -449,6 +469,7 @@ function fresh(){
   return s;
 }
 let S; try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S){ try{ S=migrate(JSON.parse(localStorage.getItem(OLD_KEY))); }catch(e){S=null} }
 if(!S||!S.lv) S=fresh();
 else {
   /* keep saved progress when new levels are added */
@@ -503,7 +524,7 @@ function renderLevel(){
   $("step1").classList.toggle("done",g&&s.step1);
   $("g1").disabled=$("g2").disabled=$("submit1").disabled=g&&s.step1;
   setFb1(g&&s.step1 ? step1Done() : null);
-  /* Level 9+: the factor boxes are Step 1, the zero product boxes are Step 2 */
+  /* Solving levels: the factor boxes are Step 1, the zero product boxes are Step 2 */
   if(sv && !g){ $("step2head").hidden=false; $("step2badge").textContent="Step 1"; $("step2title").textContent="Factor"; }
   else { $("step2badge").textContent="Step 2"; $("step2title").textContent="Factor completely"; }
   $("foil").hidden=sv&&!s.foilOn; $("foil").classList.toggle("compact",sv);
@@ -513,7 +534,7 @@ function renderLevel(){
   const locked=sv&&(g?!!s.factored:s.step1);          // factoring finished on a solving level
   $("f1").disabled=$("f2").disabled=$("g3").disabled=locked; $("submit").hidden=locked;
   $("zeroStep").hidden=!locked;
-  /* Level 16: three factors, a "how many solutions" question, then the solution set as Step 4 */
+  /* Level 18: three factors, a "how many solutions" question, then the solution set as Step 4 */
   const three=sv&&g, cOk=three&&!!s.countOk;
   $("or2").hidden=$("zline3").hidden=$("countRow").hidden=!three;
   $("zbadge").textContent=three?"Step 3":"Step 2";
@@ -524,6 +545,8 @@ function renderLevel(){
   ["z1","z2","z3"].forEach((id,i)=>$(id).value=s.z[i]||""); $("zc").value=s.zc||""; renderSolset();
   setFeedback(cOk?countMsg():null,"fbz");
   marks=null; setFeedback(locked?{kind:"good",html:`Factored correctly! ${g?K():""}${factoredText()} = 0.`}:null); renderFoil();
+  $("submit1").hidden=false; $("submitZ").hidden=false;
+  if(s.done) lockDone(true);
 }
 function renderFoil(){
   const a=parseFactor($("f1").value), b=parseFactor($("f2").value);
@@ -545,11 +568,13 @@ function renderFoil(){
   const pairs={F:[a1,b1],O:[a1,b2],I:[a2,b1],L:[a2,b2]};
   const res={};
   ids.forEach(k=>{
-    const [u,v]=pairs[k]; res[k]=[u[0]*v[0],u[1]+v[1]];
+    const [u,v]=pairs[k];
+    if(!u||!v){ res[k]=null; $("m"+k).innerHTML=`<span class="placeholder">no term</span>`; $("r"+k).innerHTML="—"; return; }   // a one-term factor like x
+    res[k]=[u[0]*v[0],u[1]+v[1]];
     $("m"+k).innerHTML=`${par(u[0],u[1])} · ${par(v[0],v[1])}`;
     $("r"+k).innerHTML="= "+mono(res[k][0],res[k][1]);
   });
-  $("expanded").innerHTML=seq(ids.map(k=>res[k]),true);
+  $("expanded").innerHTML=seq(ids.filter(k=>res[k]).map(k=>res[k]),true);
   const P=mul(a.f,b.f);
   $("product").innerHTML=seq(polyTerms(P),true,marks||undefined);
   $("timesGcf").innerHTML = gOk ? seq(polyTerms(P.map(x=>x*+gv)),true)
@@ -573,13 +598,15 @@ function another(){
   const s=st(), lv=L(), old=JSON.stringify(s.prob);
   const ctx = (!s.solved && s.count>0 && s.meta) ? s.meta : null;   // level 3: finish the same set first
   let m; do{m=lv.make(ctx)}while(JSON.stringify(m.prob)===old);
-  s.prob=m.prob; s.meta=m.meta||null; s.inputs=["",""]; s.g=["","",""]; s.z=["","","",""]; s.sol={}; s.step1=false; s.factored=false; s.countOk=false; s.zc=""; s.foilOn=false; save(); renderLevel(); $(L().gcf?"g1":"f1").focus();
+  s.prob=m.prob; s.meta=m.meta||null; s.inputs=["",""]; s.g=["","",""]; s.z=["","","",""]; s.sol={}; s.step1=false; s.factored=false; s.done=false; s.countOk=false; s.zc=""; s.foilOn=false; save(); renderLevel(); $(L().gcf?"g1":"f1").focus();
 }
 
 
 /* Count a correct answer; when it finishes the level, unlock the next one and set off fireworks. */
 function award(html){
   const s=st(), lv=L();
+  if(s.done) return html+nextRow();          // this problem was already counted
+  s.done=true;
   if(!s.solved){
     s.count=(s.count||0)+1;
     if(s.count>=lv.need){
@@ -588,15 +615,26 @@ function award(html){
       else { html+=" You’ve finished every level!"; S.champion=true; setTimeout(showChampion,500); }
     } else {
       html+=` That’s ${s.count} of ${lv.need} for Level ${lv.id}.`;
-      if(lv.id===3||lv.id===11) html+=" Next: the same numbers with different signs.";
+      if(lv.id===3||lv.id===12) html+=" Next: the same numbers with different signs.";
     }
   }
   save(); renderSteps(); renderIntro();
-  html+=`<div class="row">`;
-  if(s.solved && lv.id<LEVELS.length) html+=`<button type="button" class="btn go" data-go="${lv.id+1}">Go to Level ${lv.id+1}</button>`;
-  html+= s.solved ? `<button type="button" class="btn" data-another>Try another Level ${lv.id} problem</button></div>`
-                  : `<button type="button" class="btn go" data-another>Next problem</button></div>`;
-  return html;
+  return html+nextRow();
+}
+/* the buttons shown after a correct answer: go on, or another problem at this level */
+function nextRow(){
+  const s=st(), lv=L();
+  let h=`<div class="row">`;
+  if(s.solved && lv.id<LEVELS.length) h+=`<button type="button" class="btn go" data-go="${lv.id+1}">Go to Level ${lv.id+1}</button>`;
+  h+= s.solved ? `<button type="button" class="btn" data-another>Try another Level ${lv.id} problem</button></div>`
+               : `<button type="button" class="btn go" data-another>Try another Level ${lv.id} problem</button></div>`;
+  return h;
+}
+/* once a problem is answered correctly, hide every Submit button and lock the boxes so it can't be counted twice */
+function lockDone(showMsg){
+  ["submit","submit1","submitZ"].forEach(id=>$(id).hidden=true);
+  document.querySelectorAll(".card input").forEach(i=>i.disabled=true);
+  if(showMsg) setFeedback({kind:"good",html:`You solved this problem.${nextRow()}`}, L().solve?"fbz":"fb");
 }
 function factoredText(){
   const a=parseFactor(st().inputs[0]), b=parseFactor(st().inputs[1]);
@@ -604,7 +642,7 @@ function factoredText(){
   return `(${seq(a.terms)})(${seq(b.terms)})`;
 }
 
-/* ---------- Level 9+: zero product property ---------- */
+/* ---------- Solving levels: zero product property ---------- */
 function parseNum(raw){
   let t=String(raw).replace(/[−–—]/g,"-").replace(/\s+/g,"").replace(/^x=/i,"");
   let m=t.match(/^(-?\d+)$/); if(m) return {n:+m[1],d:1};
@@ -619,7 +657,7 @@ function rootsSorted(){
     .sort((u,v)=>u.n*v.d-v.n*u.d);
 }
 const fmtQ=q=>q.d===1?num(q.n):`${num(q.n)}/${q.d}`;
-/* the solution boxes: two plain boxes, or (Level 13) an integer box and a fraction box in order from least to greatest */
+/* the solution boxes: two plain boxes, or (Level 15) an integer box and a fraction box in order from least to greatest */
 function renderSolset(){
   const s=st(); if(!s.sol) s.sol={};
   const box=(id,label,cls)=>`<input type="text" id="${id}" class="sol${cls?" "+cls:""}" inputmode="numeric" aria-label="${label}" autocomplete="off" value="${(s.sol[id]||"").replace(/"/g,"&quot;")}">`;
@@ -643,7 +681,7 @@ function renderSolset(){
 function subMsg(q,f,extra){
   const val=fmtQ(q), rn=f[0]*q.n+f[1]*q.d, rd=q.d, g=gcd(rn,rd);
   const xs=(q.n<0||q.d>1)&&f[0]!==1?`(${val})`:(q.n<0?`(${val})`:val);
-  return `Check ${val}: substitute it into ${seq([[f[0],1],[f[1],0]])} = 0. You get ${f[0]===1?"":f[0]+" · "}${xs} + ${f[1]<0?"("+num(f[1])+")":f[1]} = ${fmtQ({n:rn/g,d:rd/g})}, not 0.${extra||""}`;
+  return `Check ${val}: substitute it into ${seq([[f[0],1],[f[1],0]])} = 0. You get ${f[0]===1&&f[1]===0 ? "" : `${f[0]===1?"":f[0]+" · "}${xs}${f[1]===0?"":" + "+(f[1]<0?"("+num(f[1])+")":f[1])} = `}${fmtQ({n:rn/g,d:rd/g})}, not 0.${extra||""}`;
 }
 function countMsg(){
   return {kind:"good",html:`Right, 2 solutions. ${K()} = 0 is never true, so the GCF doesn’t add a solution. Only the factors with x in them give solutions. Now solve.`};
@@ -655,6 +693,7 @@ function readFrac(nRaw,dRaw){
   return {q:{n:nn.n*Math.sign(dd.n),d:Math.abs(dd.n)}};
 }
 function submitZ(){
+  if(st().done) return;
   const s=st(), F=s.prob, lv=L(); if(!s.sol) s.sol={};
   const v=id=>($(id)?$(id).value.trim():"");
   const three=lv.solve&&lv.gcf;
@@ -674,7 +713,7 @@ function submitZ(){
     if(new Set(idx.filter(k=>k>=0)).size<idx.filter(k=>k>=0).length) out.push("You used the same factor more than once. Put each factor in its own box.");
   }
 
-  /* ----- Level 16, Step 3: three factors and how many solutions ----- */
+  /* ----- Level 18, Step 3: three factors and how many solutions ----- */
   if(three && !s.countOk){
     if(["z1","z2","z3","zc"].some(id=>!v(id)))
       return setFeedback({kind:"info",html:"Fill in all three factors and answer how many solutions there are."},"fbz");
@@ -691,7 +730,7 @@ function submitZ(){
     return;
   }
 
-  /* ----- solution set (and, for Levels 9–15, the two factors) ----- */
+  /* ----- solution set (and, for Levels 10–17, the two factors) ----- */
   const boxes=lv.fracSol==="both"?["n1","d1","n2","d2"]:lv.fracSol?["si","sn","sd"]:["s1","s2"];
   const zIds=three?[]:["z1","z2"];
   if(zIds.some(id=>!v(id))||boxes.some(id=>!v(id)))
@@ -720,7 +759,7 @@ function submitZ(){
     });
     if(qs.every(x=>x.q)&&eqv(qs[0].q,qs[1].q)&&!out.length) out.push("Your two solutions are the same. Each factor gives its own solution.");
   } else if(lv.fracSol){
-    /* Level 13: the boxes are in order from least to greatest, so each must hold its own root */
+    /* Level 15: the boxes are in order from least to greatest, so each must hold its own root */
     const intRoot=roots.find(r=>r.d===1), fracRoot=roots.find(r=>r.d!==1);
     const iv=parseNum(v("si"));
     if(!iv) out.push("The whole-number box needs a whole number, like 4 or −2.");
@@ -738,12 +777,15 @@ function submitZ(){
       out.push(subMsg(x.v,flip?factorFor(flip):F[0],flip?" Look closely at the sign.":""));
     });
     if(sols[0].v&&sols[1].v&&eqv(sols[0].v,sols[1].v)&&!out.length) out.push("Your two solutions are the same. Each factor gives its own solution.");
+    if(roots.some(r=>r.n===0) && !sols.some(x=>x.v&&x.v.n===0))
+      out.push("Look at your equation <b>x = 0</b>. What value of x makes it true? That value is a solution, even when it’s 0.");
   }
   if(out.length) return setFeedback({kind:"bad",html:`<span class="head">Not quite. Here’s what to check:</span><ul>${out.map(x=>`<li>${x}</li>`).join("")}</ul>`},"fbz");
   setFeedback({kind:"good",html:award(`Correct! The solutions of ${seq(polyTerms(full()))} = 0 are x = ${fmtQ(roots[0])} and x = ${fmtQ(roots[1])}.`)},"fbz");
+  lockDone(false);
 }
 
-/* ---------- Champion page after Level 16 ---------- */
+/* ---------- Champion page after the last level ---------- */
 const isChamp=()=>!!S.champion || LEVELS.every(l=>S.lv[l.id]&&S.lv[l.id].solved);
 $("champBtn").addEventListener("click",showChampion);
 function showChampion(){
@@ -820,6 +862,7 @@ function step1Done(){
   return {kind:"good",html:`Step 1 done! ${seq(polyTerms(full()))} = ${K()}(${seq(polyTerms(target()))}). Now factor completely in Step 2.`};
 }
 function submit1(){
+  if(st().done) return;
   const s=st(), k=K(), T=full(), inner=target();
   const gs=$("g1").value.trim(), q=parsePoly($("g2").value);
   const list=T.filter(x=>x!==0).map(num); const listTxt=list.slice(0,-1).join(", ")+", and "+list[list.length-1];
@@ -848,6 +891,7 @@ function submit1(){
 
 /* ---------- Checking ---------- */
 function submit(){
+  if(st().done) return;
   const a=parseFactor($("f1").value), b=parseFactor($("f2").value);
   if(a.empty||b.empty){marks=null;renderFoil();setFeedback({kind:"info",html:"Type both factors before you submit."});return;}
   if(!a.terms||!b.terms){marks=null;renderFoil();setFeedback({kind:"info",html:(a.msg||b.msg)});return;}
@@ -867,10 +911,11 @@ function submit(){
     if(L().solve){ if(L().gcf) st().factored=true; else st().step1=true; save(); renderLevel(); $("z1").focus(); return; }
     const factored=`${gcfLevel?k:""}${factoredText()}`;
     setFeedback({kind:"good",html:award(`Correct! ${factored} = ${seq(polyTerms(full()))}.`)});
+    lockDone(false);
     return;
   }
   const list=issues(P,T); if(gcfIssue) list.push(gcfIssue);
-  if(L().solve && !st().foilOn){ st().foilOn=true; save(); $("foil").hidden=false; }   // Level 9+: show FOIL after a wrong factoring
+  if(L().solve && !st().foilOn){ st().foilOn=true; save(); $("foil").hidden=false; }   // solving levels: show FOIL after a wrong factoring
   setFeedback({kind:"bad",html:`<span class="head">Not quite. Here’s what to check:</span><ul>${list.map(x=>`<li>${x}</li>`).join("")}</ul>`});
 }
 
